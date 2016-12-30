@@ -1,6 +1,6 @@
 {
   "name": "logux-sync",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Tool to synchronize events between Logux logs",
   "keywords": [
     "logux",
