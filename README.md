@@ -4,7 +4,7 @@
      src="https://cdn.rawgit.com/logux/logux/master/logo.svg">
 
 A tool for synchronizing events between [Logux logs]. It could synchronize logs
-on different machines through network, or on same machine.
+on different machines through network, or on same machine.
 
 Also it does authentication, events filtering, timestamp fixing
 and connection diagnostics.
