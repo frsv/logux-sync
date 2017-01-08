@@ -40,8 +40,8 @@ wss.on('connection', function connection (ws) {
 })
 ```
 
-[`protocol.md`]: https://github.com/logux/logux-protocol
-[Logux logs]:    https://github.com/logux/logux-core
+[`logux/protocol`]: https://github.com/logux/logux-protocol
+[Logux logs]:       https://github.com/logux/logux-core
 
 <a href="https://evilmartians.com/?utm_source=logux-sync">
   <img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg"
