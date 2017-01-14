@@ -19,16 +19,15 @@ module.exports = {
 }
 
 /**
- * Logux protocol message. It is a array with message type string in first
- * position and JS simple types in next.
+ * Logux protocol message. It is a array with string of message type in first
+ * position and strings/numbers/objects or arrays in next positions.
  *
  * @typedef {Array} Message
  * @property {string} 0 Message type
  */
 
 /**
- *
- * Abstract interface for connection to sync over it.
+ * Abstract interface for connection to synchronize logs over it.
  * For example, WebSocket or Loopback.
  *
  * @name Connection
@@ -38,7 +37,7 @@ module.exports = {
 /**
  * Send message to connection.
  *
- * @param {Message} message Message to be sent
+ * @param {Message} message The message to be sent.
  *
  * @return {undefined}
  *
@@ -47,14 +46,14 @@ module.exports = {
  * @memberof Connection#
  */
 /**
- * Subscribe for connection events. It should implement nanoevents API.
+ * Subscribe for connection events. It implements nanoevents API.
  * Supported events:
  *
  * * `connecting`: connection establishing was started.
  * * `connect`: connection was established by any side.
  * * `disconnect`: connection was closed by any side.
  * * `message`: message was receive from other node.
- * * `error`: message was wrong.
+ * * `error`: error during connection, sending or receiving.
  *
  * @param {"connecting"|"connect"|"disconnect"|"message"|"error"} event Event.
  * @param {function} listener The listener function.
