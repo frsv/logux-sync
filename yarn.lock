@@ -1710,9 +1710,9 @@ levn@^0.3.0, levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-lint-staged@^3.2.6:
-  version "3.2.6"
-  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-3.2.6.tgz#5134b384015a275363d492c3849a387ca0e1d601"
+lint-staged@^3.2.7:
+  version "3.2.7"
+  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-3.2.7.tgz#2fc7007f1c89e267ad7bacefd3f6c5baeeb6516f"
   dependencies:
     app-root-path "^2.0.0"
     cosmiconfig "^1.1.0"
@@ -1866,7 +1866,7 @@ log-update@^1.0.2:
 
 logux-core@logux/logux-core:
   version "0.1.0"
-  resolved "https://codeload.github.com/logux/logux-core/tar.gz/57b12bf33fb8b3b3488923e7f452f6f46b580fea"
+  resolved "https://codeload.github.com/logux/logux-core/tar.gz/0d0450f537491d3bc8692e6dc351d973a2a2ebd9"
   dependencies:
     nanoevents "^0.3.0"
 
@@ -2042,9 +2042,9 @@ oauth-sign@~0.8.1:
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/oauth-sign/-/oauth-sign-0.8.2.tgz#46a6ab7f0aead8deae9ec0565780b7d4efeb9d43"
 
-object-assign@^4.0.1, object-assign@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.0.tgz#7a3b3d0e98063d43f4c03f2e8ae6cd51a86883a0"
+object-assign@^4.0.1, object-assign@^4.1.0, object-assign@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
 
 object.omit@^2.0.0:
   version "2.0.1"
