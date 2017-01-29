@@ -6,6 +6,7 @@ var LocalPair = require('./local-pair')
 var SyncError = require('./sync-error')
 var Reconnect = require('./reconnect')
 var BaseSync = require('./base-sync')
+var TestPair = require('./test-pair')
 
 module.exports = {
   BrowserConnection: BrowserConnection,
@@ -15,7 +16,8 @@ module.exports = {
   LocalPair: LocalPair,
   SyncError: SyncError,
   Reconnect: Reconnect,
-  BaseSync: BaseSync
+  BaseSync: BaseSync,
+  TestPair: TestPair
 }
 
 /**
@@ -70,7 +72,7 @@ module.exports = {
  *
  * This method could be called again if connection moved to disconnected state.
  *
- * @return {undefined}
+ * @return {Promise} Promise until connection will be established.
  *
  * @name connect
  * @function

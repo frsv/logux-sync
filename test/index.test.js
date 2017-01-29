@@ -6,6 +6,7 @@ var LocalPair = require('../local-pair')
 var SyncError = require('../sync-error')
 var Reconnect = require('../reconnect')
 var BaseSync = require('../base-sync')
+var TestPair = require('../test-pair')
 var sync = require('../')
 
 it('has BrowserConnection class', function () {
@@ -38,4 +39,8 @@ it('has Reconnect class', function () {
 
 it('has BaseSync class', function () {
   expect(sync.BaseSync).toBe(BaseSync)
+})
+
+it('has BaseSync class', function () {
+  expect(sync.TestPair).toBe(TestPair)
 })

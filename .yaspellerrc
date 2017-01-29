@@ -35,6 +35,14 @@
     "nodeId",
     "otherNodeId",
     "SemVer",
-    "Versioning"
+    "Versioning",
+    "TestPair",
+    "leftEvents",
+    "rightEvents",
+    "leftSent",
+    "rightSent",
+    "leftSync",
+    "rightSync",
+    "waitFor"
   ]
 }
