@@ -119,11 +119,11 @@ in a `<meta>` tag for using it in the client JS code.
 
 If you can’t generate short unique IDs, [UUID] will be best way.
 
-Current node ID will be saved to the `nodeId` property. Other node ID
-will be saved to `otherNodeId`.
+Current node ID will be saved to the `localNodeId` property. Remote node ID
+will be saved to `remoteNodeId`.
 
 ```js
-console.log('Start synchronization with ' + client.otherNodeId)
+console.log('Start synchronization with ' + client.remoteNodeId)
 ```
 
 [UUID]: https://github.com/broofa/node-uuid
@@ -148,10 +148,10 @@ new ClientSync(nodeId, log, connection, {
 ```
 
 Logux will send this version from the client to the server and from the server
-to the client. Other node subprotocol will be saved as `otherSubprotocol`:
+to the client. Remote node subprotocol will be saved as `remoteSubprotocol`:
 
 ```js
-if (!semver.satisfies(sync.otherSubprotocol, '4.x')) {
+if (!semver.satisfies(sync.remoteSubprotocol, '4.x')) {
   useOldAPI()
 }
 ```
@@ -162,10 +162,10 @@ and send a `wrong-subprotocol` response in case of a wrong subprotocol version:
 ```js
 import SyncError from 'logux-sync/sync-error'
 sync.on('connect', () => {
-  if (!semver.satisfies(sync.otherSubprotocol, '>= 4.0.0')) {
+  if (!semver.satisfies(sync.remoteSubprotocol, '>= 4.0.0')) {
     throw new SyncError(sync, 'wrong-subprotocol', {
       supported: '>= 4.0.0',
-      used: sync.otherSubprotocol
+      used: sync.remoteSubprotocol
     })
   }
 })
@@ -252,10 +252,10 @@ client.on('state', () => {
 After receiving `connect` and `connected` messages,
 nodes will synchronize actions.
 
-Every node has `synced` and `otherSynced` properties. They contain the latest
+Every node has `lastSent` and `lastReceived` properties. They contain the latest
 `added` time of sent and received actions.
 
-If the node will go offline, `synced` and `otherSynced` properties will
+If the node will go offline, `lastSent` and `lastReceived` properties will
 be used on the next connection for finding new actions for synchronization.
 
 In most cases, you don’t need to synchronize all actions.

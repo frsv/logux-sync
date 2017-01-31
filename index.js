@@ -54,7 +54,7 @@ module.exports = {
  * * `connecting`: connection establishing was started.
  * * `connect`: connection was established by any side.
  * * `disconnect`: connection was closed by any side.
- * * `message`: message was receive from other node.
+ * * `message`: message was receive from remote node.
  * * `error`: error during connection, sending or receiving.
  *
  * @param {"connecting"|"connect"|"disconnect"|"message"|"error"} event Event.
