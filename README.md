@@ -3,13 +3,16 @@
 <img align="right" width="95" height="95" title="Logux logo"
      src="https://cdn.rawgit.com/logux/logux/master/logo.svg">
 
-A tool for synchronizing events between [Logux logs]. It could synchronize logs
+A tool for synchronizing actions between [Logux logs]. It could synchronize logs
 on different machines through network, or on same machine.
 
-Also it does authentication, events filtering, timestamp fixing
+Also it does authentication, actions filtering, timestamp fixing
 and connection diagnostics.
 
 Synchronization protocol specification: [`logux/protocol`].
+
+In most use cases, you don’t need to create Sync, high-level Logux tools
+will do it for you. But you will have access to Sync API from that tools.
 
 ```js
 import BrowserConnection from 'logux-sync/browser-connection'
@@ -21,7 +24,7 @@ const reconnect  = new Reconnect(connection)
 const sync = new ClientSync('user' + user.id + ':' + uuid, log1, connection, {
   subprotocol: [3, 0],
   credentials: user.token,
-  outFilter: event => Promise.resolve(event.sync)
+  outFilter: action => Promise.resolve(action.sync)
 })
 
 reconnect.connect()
@@ -34,7 +37,7 @@ wss.on('connection', function connection (ws) {
   const connection = new ServerConnection(ws)
   const sync = new ServerSync('server', log2, connection, {
     subprotocol: [3, 1],
-    outFilter: event => access(event),
+    outFilter: action => access(action),
     auth: token => checkToken(token)
   })
 })
@@ -51,8 +54,9 @@ wss.on('connection', function connection (ws) {
 
 ## Connection
 
-Logux protocol can work with any data encoding format (e.g. JSON or XML) and via
-any data transfer channel (e.g. WebSockets Secure or AJAX with HTTP “keep-alive”).
+Logux protocol can work with any data encoding format (e.g. JSON or XML)
+and via any data transfer channel (e.g. WebSockets Secure or AJAX
+with HTTP “keep-alive”).
 
 You can create special connection classes for different channels
 and encoding formats and use them with Logux Sync.
@@ -75,8 +79,9 @@ methods and `connect`, `disconnect` and `message` events in [NanoEvents] API.
 Some old proxy servers may block unsafe WebSocket protocol.
 It is one of the reasons why we highly recommend to use `wss://` over `ws://`.
 
-WebSocket Secure is a “HTTPS” for WebSockets. First of all, it increases user security.
-On the other hand, it also protects you from proxy-related problems.
+WebSocket Secure is a “HTTPS” for WebSockets. First of all,
+it increases user security. On the other hand, it also protects
+you from proxy-related problems.
 
 
 ### Reconnect
@@ -98,48 +103,47 @@ There is not that much difference between `ClientSync` and `ServerSync`.
 For one, the client will send `connect`, when connection will be started.
 Also, the server will destroy itself after the connection is closed.
 
-Messages are same for client and server. However, if you want a different behaviour,
-you can take `BaseSync` class and make your own roles (e.g. for a multi-master synchronization).
+Messages are same for client and server. However, if you want
+a different behaviour, you can take `BaseSync` class and make your own roles
+(e.g. for a multi-master synchronization).
 
 
-### Node Name
+### Node ID
 
-Logux Sync uses node names only for error messages. But node names are also
-used in the [default timer]. So node name uniqueness is very important
+Node ID are used in the action ID generator and it uniqueness is very important
 for correct timing and log synchronization.
 
-Ensure using unique node names. For example, your back-end
-application may use a counter to generate short and unique names.
-You can put this name in a `<meta>` tag for using it in the client JS code.
+Ensure using unique node IDs. For example, your back-end application may use
+a counter to generate short and unique IDs. You can put this name
+in a `<meta>` tag for using it in the client JS code.
 
-If you can’t generate short unique names, [UUID] will be best way.
+If you can’t generate short unique IDs, [UUID] will be best way.
 
-Current node name will be saved to the `nodeId` property. Other node name
+Current node ID will be saved to the `nodeId` property. Other node ID
 will be saved to `otherNodeId`.
 
 ```js
 console.log('Start synchronization with ' + client.otherNodeId)
 ```
 
-[default timer]: https://github.com/logux/logux-core#created-time
-[UUID]:          https://github.com/broofa/node-uuid
+[UUID]: https://github.com/broofa/node-uuid
 
 
 ### Subprotocol Versions
 
 Subprotocol is an application protocol, which you build on top of Logux.
-It consists of events and expected reactions on them.
+It consists of actions and expected reactions on them.
 
-In future you may want to change some event types or options. But some clients could
-still be using old code for some time after an update.
+In future you may want to change some action types or options.
+But some clients could still be using old code for some time after an update.
 
-It's a good reason to specify a subprotocol version using Logux Sync.
-The format in use for this purpose is a `[number major, number minor]` array:
+It’s a good reason to specify a subprotocol version in [SemVer] format
+using Logux Sync.
 
 ```js
 new ClientSync(nodeId, log, connection, {
   …
-  subprotocol: [3, 1]
+  subprotocol: '3.1.0'
 })
 ```
 
@@ -147,7 +151,7 @@ Logux will send this version from the client to the server and from the server
 to the client. Other node subprotocol will be saved as `otherSubprotocol`:
 
 ```js
-if (semver.satisfies(sync.otherSubprotocol[0], '4.x')) {
+if (!semver.satisfies(sync.otherSubprotocol, '4.x')) {
   useOldAPI()
 }
 ```
@@ -167,12 +171,14 @@ sync.on('connect', () => {
 })
 ```
 
+[SemVer]: http://semver.org/
+
 
 ### Authentication
 
 Authentication is built-in into Logux protocol. Both client and server
 can have credentials data (yet in most use cases only client will have it).
-Both can as well  have an `auth` callback for authenticating.
+Both can as well have an `auth` callback for authenticating.
 
 ```js
 new ClientSync(nodeId, log, connection, {
@@ -200,35 +206,32 @@ new ServerSync('server', log, connection, {
 
 ## Time Fixing
 
-Some clients may have wrong time zone fixing it by setting a wrong time.
-Other client may have a small (±10 minutes) time mistake or just ignore the computer's time.
+Some clients may have wrong time zone and fixed it by setting a wrong time.
+Other client may have a small (±10 minutes) time mistake or just ignore
+the computer’s time.
 
-Nevertheless, the correct time is vitally important for CRDT and other log based operations.
+Nevertheless, the correct time is vitally important for CRDT and other log
+based operations.
 
-This is why you can enable time fixing using the `fixTime` option in the client.
+This is why you can enable time fixing using the `fixTime` option.
+`ClientSync` enables it by default.
+
 Logux Sync will calculate a round-trip time and compare client and server times
 in order to calculate the time difference between them.
 
-```js
-new ClientSync(nodeId, log, connection, {
-  …
-  fixTime: true
-})
-```
-
-This fix will be applied to the events `created` timestamps before sending them to
-the server or receiving them from the server to a client log.
+This fix will be applied to the actions `time` timestamps before sending them
+to the server or receiving them from the server to a client log.
 
 
 ## State
 
 At every moment, the client-server interaction can be in one of 5 possible states:
 
-* `disconnected`: there is no connection, nor new events for synchronization.
-* `wait`: new events are awaiting synchronization, but there is no connection.
+* `disconnected`: there is no connection, nor new actions for synchronization.
+* `wait`: new actions are awaiting synchronization, but there is no connection.
 * `connecting`: connection was established and we wait for the node's response.
-* `sending`: new events were sent, waiting for the answer.
-* `synchronized`: all events are synchronized, and the connection is active.
+* `sending`: new actions were sent, waiting for the answer.
+* `synchronized`: all actions are synchronized, and the connection is active.
 
 You can get the current state accessing the `state` property or subscribing
 to it changes using the `state` event:
@@ -246,47 +249,49 @@ client.on('state', () => {
 
 ## Synchronization
 
-After receiving `connect` and `connected` messages, nodes will synchronize events.
+After receiving `connect` and `connected` messages,
+nodes will synchronize actions.
 
 Every node has `synced` and `otherSynced` properties. They contain the latest
-`added` time of sent and received events.
+`added` time of sent and received actions.
 
-If the node will go offline, `synced` and `otherSynced` properties will be used on the next
-connection for finding new events for synchronization.
+If the node will go offline, `synced` and `otherSynced` properties will
+be used on the next connection for finding new actions for synchronization.
 
-In most cases, you don’t need to synchronize all events.
-Some client events are local (like clicks or animation updates).
-Some server events, however, are now allowed to be shown for every client.
+In most cases, you don’t need to synchronize all actions.
+Some client actions are local (like clicks or animation updates).
+Some server actions, however, are now allowed to be shown for every client.
 
 So client and server have `inFilter` and `outFilter` options. This callbacks
 should return Promises resolving with `true` or `false`.
 
-In the `outFilter`, you can specify the event to send:
+In the `outFilter`, you can specify the action to send:
 
 ```js
 new ClientSync(nodeId, log, connection, {
   …
-  outFilter: event => Promise.resolve(event.sync)
+  outFilter: action => Promise.resolve(action.sync)
 })
 ```
 
-In the `inFilter` you can specify the events to be received:
+In the `inFilter` you can specify the actions to be received:
 
 ```js
 new ServerSync(nodeId, log, connection, {
   …
-  inFilter: event => doesUserHaveWriteAccess(event)
+  inFilter: action => doesUserHaveWriteAccess(action)
 })
 ```
 
-Also, you can change events before sending or adding them to the log using `inMap`
-and `outMap` options.
+Also, you can change actions before sending or adding them to the log
+using `inMap` and `outMap` options.
 
 
 ## Diagnostics
 
 Sometimes the connection can go down without emitting a `disconnected` event.
-So there is an explicit answer for every message in order to ensure that it was received.
+So there is an explicit answer for every message in order to ensure that
+it was received.
 
 You can set a milliseconds `timeout` option and if the answer will not received
 after this time, Logux Sync will close the connection and throw an error.
@@ -298,13 +303,14 @@ new ClientSync(nodeId, log, connection, {
 })
 ```
 
-To be sure that connection is working and you get the latest state from the server,
-Logux Sync can send `ping` messages. Set milliseconds `ping` option specifying
-how often it should test the connection:
+To be sure that connection is working and you get the latest state
+from the server, Logux Sync can send `ping` messages. Set milliseconds `ping`
+option specifying how often it should test the connection:
 
 ```js
 new ClientSync(nodeId, log, connection, {
   …
+  timeout: 5000,
   ping: 10000
 })
 ```
@@ -321,17 +327,38 @@ client.catch(error => {
 
 ## Finishing
 
-After finishing the synchronization, call the `destroy()` method. It will remove
-every listener and disable the synchronization.
+When you will not need synchronization, call the `destroy()` method.
+It will remove every listener and disable the synchronization.
 
 
 ## Tests
 
-`LocalPair` is a connection for tests or log synchronization on the same machine.
+`LocalPair` is a loopback connection pair synchronization on the same machine.
 
 ```js
 import { LocalPair } from 'logux-sync'
 const pair = new LocalPair()
 const client = new ClientSync('client', log1, pair.left)
 const server = new ServerSync('server', log2, pair.right)
+```
+
+But we also have special `TestPair` with test helpers:
+
+```js
+import { TestPair } from 'logux-sync'
+
+it('should send messages', () => {
+  const pair = new TestPair()
+  const client = new ClientSync('client', log1, pair.left)
+
+  pair.right.connect()
+  return pair.wait().then(() => {
+    expect(pair.right.connected).toBeTruthy()
+    return pair.wait()
+  }).then(() => {
+    expect(pair.leftSent).toEqual([
+      ['connect', …]
+    ])
+  })
+})
 ```
