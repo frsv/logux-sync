@@ -29,7 +29,7 @@
     "logux-core": "logux/logux-core",
     "pre-commit": "^1.2.2",
     "rimraf": "^2.5.4",
-    "ws": "^2.0.0",
+    "ws": "^2.0.1",
     "yaspeller": "^3.0.0"
   },
   "scripts": {
