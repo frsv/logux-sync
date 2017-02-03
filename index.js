@@ -84,6 +84,10 @@ module.exports = {
  * After disconnection, connection could be started again
  * by {@link Connection#connect}.
  *
+ * @param {"error"|"timeout"|"destroy"} [reason] Disconnection reason.
+ *                                               It will not be sent
+ *                                               to other machine.
+ *
  * @return {undefined}
  *
  * @name disconnect
