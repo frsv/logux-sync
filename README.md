@@ -22,7 +22,7 @@ import Reconnect from 'logux-sync/reconnect'
 const connection = new BrowserConnection('wss://logux.example.com')
 const reconnect  = new Reconnect(connection)
 const sync = new ClientSync('user' + user.id + ':' + uuid, log1, connection, {
-  subprotocol: [3, 0],
+  subprotocol: '3.0.0',
   credentials: user.token,
   outFilter: action => Promise.resolve(action.sync)
 })
@@ -36,7 +36,7 @@ import { ServerSync, ServerConnection } from 'logux-sync'
 wss.on('connection', function connection (ws) {
   const connection = new ServerConnection(ws)
   const sync = new ServerSync('server', log2, connection, {
-    subprotocol: [3, 1],
+    subprotocol: '3.1.0',
     outFilter: action => access(action),
     auth: token => checkToken(token)
   })
