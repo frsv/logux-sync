@@ -519,6 +519,10 @@ BaseSync.prototype = {
     if (DUILIANS[line]) {
       this.send(['duilian', DUILIANS[line]])
     }
+  },
+
+  sendDebug: function sendDebug (message) {
+    this.send(['debug', message])
   }
 
 }

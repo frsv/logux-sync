@@ -98,6 +98,15 @@ it('sends messages to connection', function () {
   })
 })
 
+it('sends debug messages to connection', function () {
+  return createTest().then(function (test) {
+    test.leftSync.sendDebug('test debug message')
+    return test.wait()
+  }).then(function (test) {
+    expect(test.leftSent).toEqual([['debug', 'test debug message']])
+  })
+})
+
 it('has connection state', function () {
   var sync = createSync()
   expect(sync.connected).toBeFalsy()
